@@ -1,8 +1,8 @@
 #re-initialize neural network weights and reset the data providers so you get a properly initialized experiment.
 
 import matplotlib.pyplot as plt
-%matplotlib inline
-plt.style.use('ggplot')
+#%matplotlib inline
+#plt.style.use('ggplot')
 
 def train_model_and_plot_stats(
         model, error, learning_rule, train_data, valid_data, num_epochs, stats_interval, notebook=True):
