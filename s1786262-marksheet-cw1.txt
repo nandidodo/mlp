@@ -1,0 +1,35 @@
+s1786262
+MLP Coursework 1
+October 2017
+
+TOTAL MARK: 30 + 65  =  95/100
+
+
+TEST RESULTS:
+LeakyReLU fprop: Passed
+LeakyReLU bprop: Passed
+ELU fprop: Passed
+ELU bprop: Passed
+SELU fprop: Passed
+SELU bprop: Passed
+PART 1 MARK: 30/30 (6 tests passed)
+
+
+PART 2 MARK:  65/70
+
+COMMENTS:
+
+Abstract: Very good abstract. [5/5]
+
+Introduction: Great introduction - full and clear. MNIST dataset is well-described.  [5/5]
+
+Description of activation functions: All derivations are correct, referenced and well-formatted. [10/10] 
+
+Activation function experiments: Experimental setup is partially described - it is not clear what learning rate was used, what optimisation procedure or error function. Each experiment was run 10 times and mean +/- std dev were reported - very good practice! You present and interpret your results very well. Would have been good if learning curves were provided as well in order to gain further understanding into the properties of the different functions.  [15/15]
+
+Deep neural network experiments: The results are presented and interpreted well. There seemed to be missing interpretation of results from the weight initialisation experiments - why does a certain scheme outperforms/underperforms the others. Some comments are later provided in the conclusion chapter. Remember that reporting the results and saying what happens is not enough - a good report would try and answer why do the reported things happen. [22/25]
+
+Conclusions: The conclusion is fairly lengthy and it feels that parts of it really belong into the previous chapters. The last paragraph wraps it up well. There is no discussion for future lines of work. Good overall usage of external literature!  [8/10]
+
+
+

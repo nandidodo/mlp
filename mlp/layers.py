@@ -355,12 +355,20 @@ class BatchNormalizationLayer(StochasticLayerWithParameters):
         self.cache = None
         self.input_dim = input_dim
 
-    def fprop(self, inputs, stochastic=True):
+    def fprop(self, X, stochastic=True):
         """Forward propagates inputs through a layer."""
+        
+        self.mu = np.mean(X, axis=0)
+        self.var = np.var(X, axis=0)
 
-        raise NotImplementedError
+        X_norm = (X - self.mu) / np.sqrt(self.var + self.epsilon)
+        outputs = self.gamma * X_norm + self.beta
 
-    def bprop(self, inputs, outputs, grads_wrt_outputs):
+        self.cache = X_norm
+
+        return outputs
+
+    def bprop(self, X, outputs, grads_wrt_outputs):
         """Back propagates gradients through a layer.
 
         Given gradients with respect to the outputs of the layer calculates the
@@ -378,7 +386,20 @@ class BatchNormalizationLayer(StochasticLayerWithParameters):
             (batch_size, input_dim).
         """
 
-        raise NotImplementedError
+        X_norm = self.cache
+
+        N, D = X.shape
+
+        self.X_mu = X - self.mu
+        self.std_inv = 1. / np.sqrt(self.var + self.epsilon)
+
+        dX_norm = grads_wrt_outputs * self.gamma
+        self.dvar = np.sum(dX_norm * self.X_mu, axis=0) * -.5 * self.std_inv**3
+        self.dmu = np.sum(dX_norm * -self.std_inv, axis=0) + self.dvar * np.mean(-2. * self.X_mu, axis=0)
+
+        dX = (dX_norm * self.std_inv) + (self.dvar * 2 * self.X_mu / N) + (self.dmu / N)
+
+        return dX
 
     def grads_wrt_params(self, inputs, grads_wrt_outputs):
         """Calculates gradients with respect to layer parameters.
@@ -392,7 +413,12 @@ class BatchNormalizationLayer(StochasticLayerWithParameters):
             list of arrays of gradients with respect to the layer parameters
             `[grads_wrt_weights, grads_wrt_biases]`.
         """
-        raise NotImplementedError
+        X_norm = self.cache
+
+        dgamma = np.sum(grads_wrt_outputs * X_norm, axis=0)
+        dbeta = np.sum(grads_wrt_outputs, axis=0)
+
+        return dgamma, dbeta
 
     def params_penalty(self):
         """Returns the parameter dependent penalty term for this layer.
@@ -532,7 +558,19 @@ class ConvolutionalLayer(LayerWithParameters):
         Returns:
             outputs: Array of layer outputs of shape (batch_size, output_dim).
         """
-        raise NotImplementedError
+        output_dim_1 = self.input_dim_1-self.kernel_dim_1+1
+        output_dim_2 = self.input_dim_2-self.kernel_dim_2+1
+        h = np.zeros((inputs.shape[0], self.num_output_channels,self.input_dim_1 - self.kernel_dim_1 + 1, self.input_dim_2 - self.kernel_dim_2 + 1))
+        for n in range(inputs.shape[0]):
+            for f in range(self.num_output_channels):
+                for i in range(output_dim_1):
+                    for j in range(output_dim_2):
+                        h[n,f,i,j] += self.biases[f]
+                        for c in range(self.num_input_channels):
+                            for k in range(self.kernel_dim_1):  
+                                for l in range(self.kernel_dim_2):
+                                    h[n,f,i,j] += self.kernels[f,c,k,l]*inputs[n,c,i+k,j+l]
+        return h
 
     def bprop(self, inputs, outputs, grads_wrt_outputs):
         """Back propagates gradients through a layer.
@@ -551,9 +589,20 @@ class ConvolutionalLayer(LayerWithParameters):
             Array of gradients with respect to the layer inputs of shape
             (batch_size, input_dim).
         """
-        # Pad the grads_wrt_outputs
-
-        raise NotImplementedError
+        # NEVER Pad the grads_wrt_outputs
+        grads_padded = np.pad(grads_wrt_outputs, ((0,0), (0,0), (self.kernel_dim_1-1, self.kernel_dim_1-1),(self.kernel_dim_1-1, self.kernel_dim_1-1)), 'constant')
+        kernels_rot = self.kernels[:, :, ::-1, ::-1]
+        h = np.zeros_like(inputs)
+        for n in range(outputs.shape[0]):
+            for f in range(self.num_output_channels):
+                for i in range(self.input_dim_1):
+                    for j in range(self.input_dim_2):
+                        for c in range(self.num_input_channels):
+                            for k in range(self.kernel_dim_1):  
+                                for l in range(self.kernel_dim_2): 
+                                    h[n,c,i,j] += kernels_rot[f,c,k,l] * grads_padded[n,f,i+k,j+l]
+        return h
+        
 
     def grads_wrt_params(self, inputs, grads_wrt_outputs):
         """Calculates gradients with respect to layer parameters.
@@ -566,8 +615,20 @@ class ConvolutionalLayer(LayerWithParameters):
             list of arrays of gradients with respect to the layer parameters
             `[grads_wrt_kernels, grads_wrt_biases]`.
         """
+        grads_wrt_biases = np.sum(grads_wrt_outputs, axis=(0,2,3))
+        grads_wrt_kernels = np.zeros_like(self.kernels)
+        for n in range(inputs.shape[0]):
+            for f in range(self.num_output_channels):
+                for c in range(self.num_input_channels):
+                    for k in range(self.kernel_dim_1):  
+                        for l in range(self.kernel_dim_2):
+                            for i in range(grads_wrt_outputs.shape[2]):
+                                for j in range(grads_wrt_outputs.shape[3]):
+                                    grads_wrt_kernels[f,c,k,l] += grads_wrt_outputs[n,f,i,j] * inputs[n,c,k+i,l+j]
+                                    # grads_wrt_kernels[f,c,k,l] += inputs[n,c,k+i,l+j]
+        return [grads_wrt_kernels, grads_wrt_biases]
 
-        raise NotImplementedError
+        
 
     def params_penalty(self):
         """Returns the parameter dependent penalty term for this layer.
@@ -601,6 +662,26 @@ class ConvolutionalLayer(LayerWithParameters):
                     self.input_dim_1, self.input_dim_2, self.kernel_dim_1,
                     self.kernel_dim_2)
         )
+
+
+class MaxPoolingLayer(Layer):
+
+    def __init__(self, kernel_size=2):
+        self.kernel_size = kernel_size
+
+    def fprop(self, inputs):
+        N, num_input_channels, input_dim_1, input_dim_2 = inputs.shape
+        output_dim_1 = int((input_dim_1-self.kernel_size)/2)+1
+        output_dim_2 = int((input_dim_2-self.kernel_size)/2)+1
+        outputs = np.empty((N, num_input_channels, output_dim_1, output_dim_2))
+        for n in range(N):
+            for c in range(num_input_channels):
+                for i in range(output_dim_1):
+                    for j in range(output_dim_2):
+                        outputs[n,c,i,j] = np.max(inputs[n,c,2*i:2*i+self.kernel_size, 2*j:2*j+self.kernel_size])
+
+
+
 
 
 class ReluLayer(Layer):
