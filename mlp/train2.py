@@ -85,6 +85,7 @@ stats_interval = 1
 input_dim, output_dim, hidden_dim = 784, 47, 420
 
 activations = [SigmoidLayer(), ReluLayer(), LeakyReluLayer(), ELULayer(), SELULayer()]
+name = ['sig', 'relu', 'lrelu', 'elu', 'selu']
 
 def build_network(n_layers, activation):
     weights_init = GlorotUniformInit(rng=rng)
@@ -103,12 +104,12 @@ learning_rule = GradientDescentLearningRule(learning_rate=learning_rate)
 #Remember to use notebook=False when you write a script to be run in a terminal
 for i in np.arange(5):
     for n_layers in range(2,5):
-        for act in activations:
+        for act, n in zip(activations, name):
             print(n_layers)
             model = build_network(n_layers, act)
             train_data.reset()
             valid_data.reset()
             stats = train_model_and_plot_stats(
                 model, error, learning_rule, train_data, valid_data, num_epochs, stats_interval, notebook=False)
-            path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(n_layers) + '_' + str(act) + '_'
+            path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(n_layers) + '_' + n + '_'
             np.save(path, stats)
