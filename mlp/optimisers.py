@@ -127,7 +127,7 @@ class Optimiser(object):
             ', '.join(['{0}={1:.2e}'.format(k, v) for (k, v) in stats.items()])
         ))
 
-    def train(self, num_epochs, stats_interval=5):
+    def train(self, patience=10, max_num_epochs=1000, stats_interval=5):
         """Trains a model for a set number of epochs.
 
         Args:
@@ -143,6 +143,8 @@ class Optimiser(object):
         """
         start_train_time = time.time()
         run_stats = [list(self.get_epoch_stats().values())]
+        counter = patience
+        best_acc = 0
         with self.tqdm_progress(total=num_epochs) as progress_bar:
             progress_bar.set_description("Experiment Progress")
             for epoch in range(1, num_epochs + 1):
@@ -154,6 +156,14 @@ class Optimiser(object):
                     stats = self.get_epoch_stats()
                     self.log_stats(epoch, epoch_time, stats)
                     run_stats.append(list(stats.values()))
+                    if stats['acc(valid)'][-1] > best_acc:
+                        best_acc = stats['acc(valid)'][-1]
+                        counter = patience
+                    else:
+                        counter -= 1
+                    if counter == 0:
+                        break
+
                 #epoch_info = str(list(stats.values()))
                 progress_bar.update(1)
 
