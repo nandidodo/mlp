@@ -80,7 +80,7 @@ from mlp.optimisers import Optimiser
 
 #setup hyperparameters
 learning_rate = 0.1
-num_epochs = 5
+num_epochs = 1
 stats_interval = 1
 input_dim, output_dim, hidden_dim = 784, 47, 420
 
