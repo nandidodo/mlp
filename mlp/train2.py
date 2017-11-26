@@ -17,7 +17,7 @@ def train_model_and_plot_stats(
 
     # Run the optimiser for 5 epochs (full passes through the training set)
     # printing statistics every epoch.
-    stats, keys, run_time = optimiser.train(num_epochs=num_epochs, stats_interval=stats_interval)
+    stats, keys, run_time = optimiser.train(patience=10, max_num_epochs=num_epochs, stats_interval=stats_interval)
 
     # # Plot the change in the validation and training set error over training.
     # fig_1 = plt.figure(figsize=(8, 4))
@@ -80,7 +80,7 @@ from mlp.optimisers import Optimiser
 
 #setup hyperparameters
 learning_rate = 0.1
-num_epochs = 100
+num_epochs = 200
 stats_interval = 1
 input_dim, output_dim, hidden_dim = 784, 47, 420
 
@@ -111,5 +111,5 @@ for i in np.arange(5):
             valid_data.reset()
             stats = train_model_and_plot_stats(
                 model, error, learning_rule, train_data, valid_data, num_epochs, stats_interval, notebook=False)
-            path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(n_layers) + '_' + n + '_'
+            path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(n_layers) + '_' + n
             np.save(path, stats)
