@@ -110,5 +110,5 @@ for i in np.arange(5):
             valid_data.reset()
             stats = train_model_and_plot_stats(
                 model, error, learning_rule, train_data, valid_data, num_epochs, stats_interval, notebook=False)
-            path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + name + '_' + 'run' + str(i) + '_' + str(n_layers)
+            path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(n_layers) + '_' + str(act) + '_'
             np.save(path, stats)
