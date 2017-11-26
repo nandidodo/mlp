@@ -105,7 +105,7 @@ for i in np.arange(5):
     for n_layers in range(2,5):
         for act in activations:
             print(n_layers)
-            build_network(n_layers, act)
+            model = build_network(n_layers, act)
             train_data.reset()
             valid_data.reset()
             stats = train_model_and_plot_stats(
