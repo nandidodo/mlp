@@ -1,6 +1,6 @@
 #re-initialize neural network weights and reset the data providers so you get a properly initialized experiment.
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #%matplotlib inline
 #plt.style.use('ggplot')
 
@@ -19,23 +19,23 @@ def train_model_and_plot_stats(
     # printing statistics every epoch.
     stats, keys, run_time = optimiser.train(num_epochs=num_epochs, stats_interval=stats_interval)
 
-    # Plot the change in the validation and training set error over training.
-    fig_1 = plt.figure(figsize=(8, 4))
-    ax_1 = fig_1.add_subplot(111)
-    for k in ['error(train)', 'error(valid)']:
-        ax_1.plot(np.arange(1, stats.shape[0]) * stats_interval, 
-                  stats[1:, keys[k]], label=k)
-    ax_1.legend(loc=0)
-    ax_1.set_xlabel('Epoch number')
+    # # Plot the change in the validation and training set error over training.
+    # fig_1 = plt.figure(figsize=(8, 4))
+    # ax_1 = fig_1.add_subplot(111)
+    # for k in ['error(train)', 'error(valid)']:
+    #     ax_1.plot(np.arange(1, stats.shape[0]) * stats_interval, 
+    #               stats[1:, keys[k]], label=k)
+    # ax_1.legend(loc=0)
+    # ax_1.set_xlabel('Epoch number')
 
-    # Plot the change in the validation and training set accuracy over training.
-    fig_2 = plt.figure(figsize=(8, 4))
-    ax_2 = fig_2.add_subplot(111)
-    for k in ['acc(train)', 'acc(valid)']:
-        ax_2.plot(np.arange(1, stats.shape[0]) * stats_interval, 
-                  stats[1:, keys[k]], label=k)
-    ax_2.legend(loc=0)
-    ax_2.set_xlabel('Epoch number')
+    # # Plot the change in the validation and training set accuracy over training.
+    # fig_2 = plt.figure(figsize=(8, 4))
+    # ax_2 = fig_2.add_subplot(111)
+    # for k in ['acc(train)', 'acc(valid)']:
+    #     ax_2.plot(np.arange(1, stats.shape[0]) * stats_interval, 
+    #               stats[1:, keys[k]], label=k)
+    # ax_2.legend(loc=0)
+    # ax_2.set_xlabel('Epoch number')
     
     return stats, keys, run_time, fig_1, ax_1, fig_2, ax_2
 
