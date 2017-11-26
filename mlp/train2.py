@@ -80,12 +80,12 @@ from mlp.optimisers import Optimiser
 
 #setup hyperparameters
 learning_rate = 0.1
-num_epochs = 1
+num_epochs = 5
 stats_interval = 1
 input_dim, output_dim, hidden_dim = 784, 47, 420
 
-activations = [SigmoidLayer(), ReluLayer(), LeakyReluLayer(), ELULayer(), SELULayer()]
-name = ['sig', 'relu', 'lrelu', 'elu', 'selu']
+activations = [ReluLayer(), LeakyReluLayer(), ELULayer(), SELULayer()]
+name = ['relu', 'lrelu', 'elu', 'selu']
 
 def build_network(n_layers, activation):
     weights_init = GlorotUniformInit(rng=rng)
