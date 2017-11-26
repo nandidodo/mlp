@@ -10,6 +10,7 @@ import logging
 from collections import OrderedDict
 import numpy as np
 import tqdm
+
 logger = logging.getLogger(__name__)
 
 
@@ -51,6 +52,11 @@ class Optimiser(object):
 
         if data_monitors is not None:
             self.data_monitors.update(data_monitors)
+        self.notebook = notebook
+        if notebook:
+            self.tqdm_progress = tqdm.tqdm_notebook
+        else:
+            self.tqdm_progress = tqdm.tqdm
 
     def do_training_epoch(self):
         """Do a single training epoch.
@@ -85,7 +91,7 @@ class Optimiser(object):
         data_mon_vals = OrderedDict([(key + label, 0.) for key
                                      in self.data_monitors.keys()])
         for inputs_batch, targets_batch in dataset:
-            activations = self.model.fprop(inputs_batch)
+            activations = self.model.fprop(inputs_batch, evaluation=True)
             for key, data_monitor in self.data_monitors.items():
                 data_mon_vals[key + label] += data_monitor(
                     activations[-1], targets_batch)
@@ -143,13 +149,13 @@ class Optimiser(object):
                 start_time = time.time()
                 self.do_training_epoch()
                 epoch_time = time.time() - start_time
+
                 if epoch % stats_interval == 0:
                     stats = self.get_epoch_stats()
                     self.log_stats(epoch, epoch_time, stats)
                     run_stats.append(list(stats.values()))
                 #epoch_info = str(list(stats.values()))
                 progress_bar.update(1)
-
 
         finish_train_time = time.time()
         total_train_time = finish_train_time - start_train_time

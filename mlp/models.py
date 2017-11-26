@@ -7,7 +7,8 @@ outputs (and intermediate states) and for calculating gradients of scalar
 functions of the outputs with respect to the model parameters.
 """
 
-from mlp.layers import LayerWithParameters, StochasticLayer
+
+from mlp.layers import LayerWithParameters, StochasticLayer, StochasticLayerWithParameters
 
 
 class SingleLayerModel(object):
@@ -63,7 +64,7 @@ class SingleLayerModel(object):
         return self.layer.params_penalty()
 
     def __repr__(self):
-        return 'SingleLayerModel(' + str(layer) + ')'
+        return 'SingleLayerModel(' + str(self.layer) + ')'
 
 
 class MultipleLayerModel(object):
@@ -82,11 +83,12 @@ class MultipleLayerModel(object):
         """A list of all of the parameters of the model."""
         params = []
         for layer in self.layers:
-            if isinstance(layer, LayerWithParameters):
+            if isinstance(layer, LayerWithParameters) or isinstance(layer, StochasticLayerWithParameters):
                 params += layer.params
         return params
 
-    def fprop(self, inputs, stochastic=True):
+
+    def fprop(self, inputs, evaluation=False):
         """Forward propagates a batch of inputs through the model.
         Args:
             inputs: Batch of inputs to the model.
@@ -99,11 +101,19 @@ class MultipleLayerModel(object):
         """
         activations = [inputs]
         for i, layer in enumerate(self.layers):
-            if isinstance(layer, StochasticLayer):
-                activations.append(self.layers[i].fprop(
-                    activations[i], stochastic=stochastic))
+            if evaluation:
+                if issubclass(type(self.layers[i]), StochasticLayer) or issubclass(type(self.layers[i]),
+                                                                                   StochasticLayerWithParameters):
+                    current_activations = self.layers[i].fprop(activations[i], stochastic=False)
+                else:
+                    current_activations = self.layers[i].fprop(activations[i])
             else:
-                activations.append(self.layers[i].fprop(activations[i]))
+                if issubclass(type(self.layers[i]), StochasticLayer) or issubclass(type(self.layers[i]),
+                                                                                   StochasticLayerWithParameters):
+                    current_activations = self.layers[i].fprop(activations[i], stochastic=True)
+                else:
+                    current_activations = self.layers[i].fprop(activations[i])
+            activations.append(current_activations)
         return activations
 
     def grads_wrt_params(self, activations, grads_wrt_outputs):
@@ -122,10 +132,9 @@ class MultipleLayerModel(object):
         for i, layer in enumerate(self.layers[::-1]):
             inputs = activations[-i - 2]
             outputs = activations[-i - 1]
-            if isinstance(layer, LayerWithParameters):
-                # Gradients are appended in reversed order, going backwards
-                # through layers, so grads_wrt_params can be reversed at end to
-                # give gradients in consistent order with self.params
+
+            grads_wrt_inputs = layer.bprop(inputs, outputs, grads_wrt_outputs)
+            if isinstance(layer, LayerWithParameters) or isinstance(layer, StochasticLayerWithParameters):
                 grads_wrt_params += layer.grads_wrt_params(
                     inputs, grads_wrt_outputs)[::-1]
             # If not at first layer back-propagate gradients
