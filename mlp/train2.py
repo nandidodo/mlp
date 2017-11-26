@@ -37,7 +37,7 @@ def train_model_and_plot_stats(
     # ax_2.legend(loc=0)
     # ax_2.set_xlabel('Epoch number')
     
-    return stats, keys, run_time, fig_1, ax_1, fig_2, ax_2
+    return stats, keys, #run_time, fig_1, ax_1, fig_2, ax_2
 
 
 
