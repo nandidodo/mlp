@@ -82,12 +82,10 @@ from mlp.optimisers import Optimiser
 learning_rate = 0.1
 num_epochs = 200
 stats_interval = 1
-input_dim, output_dim, hidden_dim = 784, 47, 420
+input_dim, output_dim = 784, 47 
 
-activations = [ReluLayer(), LeakyReluLayer(), ELULayer(), SELULayer()]
-name = ['relu', 'lrelu', 'elu', 'selu']
 
-def build_network(n_layers, activation):
+def build_network(hidden_dim, n_layers, activation):
     weights_init = GlorotUniformInit(rng=rng)
     biases_init = ConstantInit(0.)
     l = [AffineLayer(input_dim, hidden_dim, weights_init, biases_init), activation]
@@ -104,9 +102,9 @@ learning_rule = GradientDescentLearningRule(learning_rate=learning_rate)
 #Remember to use notebook=False when you write a script to be run in a terminal
 for i in np.arange(5):
     for n_layers in range(2,5):
-        for act, n in zip(activations, name):
+        for hidden_dim in [100, 200, 300, 400, 500]:
             print(n_layers)
-            model = build_network(n_layers, act)
+            model = build_network(hidden_dim, n_layers, ReluLayer())
             train_data.reset()
             valid_data.reset()
             stats = train_model_and_plot_stats(
