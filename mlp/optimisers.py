@@ -156,8 +156,8 @@ class Optimiser(object):
                     stats = self.get_epoch_stats()
                     self.log_stats(epoch, epoch_time, stats)
                     run_stats.append(list(stats.values()))
-                    if stats['acc(valid)'][-1] > best_acc:
-                        best_acc = stats['acc(valid)'][-1]
+                    if stats['acc(valid)'] > best_acc:
+                        best_acc = stats['acc(valid)']
                         counter = patience  
                     else:
                         counter -= 1
