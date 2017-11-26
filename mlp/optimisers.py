@@ -145,9 +145,9 @@ class Optimiser(object):
         run_stats = [list(self.get_epoch_stats().values())]
         counter = patience
         best_acc = 0
-        with self.tqdm_progress(total=num_epochs) as progress_bar:
+        with self.tqdm_progress(total=max_num_epochs) as progress_bar:
             progress_bar.set_description("Experiment Progress")
-            for epoch in range(1, num_epochs + 1):
+            for epoch in range(1, max_num_epochs + 1):
                 start_time = time.time()
                 self.do_training_epoch()
                 epoch_time = time.time() - start_time
@@ -158,7 +158,7 @@ class Optimiser(object):
                     run_stats.append(list(stats.values()))
                     if stats['acc(valid)'][-1] > best_acc:
                         best_acc = stats['acc(valid)'][-1]
-                        counter = patience
+                        counter = patience  
                     else:
                         counter -= 1
                     if counter == 0:
