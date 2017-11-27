@@ -101,19 +101,21 @@ def build_network(hidden_dim, n_layers, activation, incl_prob=None):
 
 error = CrossEntropySoftmaxError()
 # Use a basic gradient descent learning rule
-learning_rules = GradientDescentLearningRule(learning_rate=learning_rate), Adam(learning_rate=learning_rate), RMSProp(learning_rate=learning_rate)
-lrule_names = ['sgd', 'adam', 'rms']
+learning_rules = Adam, RMSProp, GrdientDescentLearningRule
+lrule_names = ['adam', 'rms', 'gds']
 
 #Remember to use notebook=False when you write a script to be run in a terminal
 for i in np.arange(20):
     seed += i
     for name, learning_rule in zip(lrule_names, learning_rules):
         for dout_prob in [0.8, None]:
-            for l_rate in [0.1, 0.01]:
-                model = build_network(400, 4, ReluLayer(), incl_prob=dout_prob)
+            for l_rate in [0.001, 0.01, 0.1]:
+                if l_rate == 0.1 and name != 'sgd':
+                    continue
+                model = build_network(300, 4, ReluLayer(), incl_prob=dout_prob)
                 train_data.reset()
                 valid_data.reset()
                 stats = train_model_and_plot_stats(
-                    model, error, learning_rule, train_data, valid_data, num_epochs, stats_interval, notebook=False)
+                    model, error, learning_rule(learning_rate=l_rate), train_data, valid_data, num_epochs, stats_interval, notebook=False)
                 path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(name) + '_' + str(dout_prob) + '_' + str(l_rate)
                 np.save(path, stats)
