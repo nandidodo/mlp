@@ -104,7 +104,7 @@ convmodel = MultipleLayerModel([
 
 #2
 convmodel_twolayers = MultipleLayerModel([
-    ReshapeLayer(1, 1, 28),
+    ReshapeLayer((1, 1, 28)),
     ConvolutionalLayer(1 , 5, 28, 28, 5, 5), 
     ReluLayer(),
     MaxPoolingLayer(2),
@@ -134,7 +134,7 @@ convmodel_dropout = MultipleLayerModel([
 
 #4
 convmodel_twolayers_dropout = MultipleLayerModel([
-    ReshapeLayer(1, 1, 28),
+    ReshapeLayer((1, 1, 28)),
     DropoutLayer(rng=rng, incl_prob=0.8),
     ConvolutionalLayer(1 , 5, 28, 28, 5, 5), 
     ReluLayer(),
