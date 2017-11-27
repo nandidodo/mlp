@@ -664,9 +664,9 @@ class ConvolutionalLayer(LayerWithParameters):
 @jit
 def maxpool(inputs, kernel_size, output_dim_1, output_dim_2):
     batch_size, num_input_channels, input_dim_1, input_dim_2 = inputs.shape
-    outputs = np.empty((N, num_input_channels, output_dim_1, output_dim_2))
+    outputs = np.empty((batch_size, num_input_channels, output_dim_1, output_dim_2))
     mask = np.zeros_like(inputs)
-    for n in range(N):
+    for n in range(batch_size):
         for c in range(num_input_channels):
             for i in range(output_dim_1):
                 for j in range(output_dim_2):
