@@ -92,12 +92,12 @@ def build_network(hidden_dim, n_layers, activation, incl_prob=None, batchnm=True
     biases_init = ConstantInit(0.)
     if batchnm:
         act = [BatchNormalizationLayer(hidden_dim), activation]
-        act_in = [BatchNormalizationLayer(input_dim), activation]
+        # act_in = [BatchNormalizationLayer(input_dim), activation]
     else:
         act = [activation]
-        act_in = [activation]
+        # act_in = [activation]
 
-    l = [AffineLayer(input_dim, hidden_dim, weights_init, biases_init)] + act_in
+    l = [AffineLayer(input_dim, hidden_dim, weights_init, biases_init)] + act
     for i in range(n_layers-1):
         if incl_prob is not None:
             l += [DropoutLayer(rng=rng, incl_prob=incl_prob), \
