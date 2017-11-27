@@ -112,7 +112,7 @@ def build_network(hidden_dim, n_layers, activation, incl_prob=None, batchnm=True
 
 error = CrossEntropySoftmaxError()
 # Use a basic gradient descent learning rule
-learning_rules = Adam, RMSProp, GrdientDescentLearningRule
+learning_rules = Adam, RMSProp, GradientDescentLearningRule
 lrule_names = ['adam', 'rms', 'gds']
 
 #Remember to use notebook=False when you write a script to be run in a terminal
