@@ -696,10 +696,7 @@ class MaxPoolingLayer(Layer):
         return grads
 
     def __repr__(self):
-    return (
-        'MaxPoolingLayer(kernel_size={})'
-        .format(self.kernel_size)
-    )
+        return ('MaxPoolingLayer(kernel_size={})'.format(self.kernel_size))
 
 class ReluLayer(Layer):
     """Layer implementing an element-wise rectified linear transformation."""
