@@ -684,7 +684,7 @@ class MaxPoolingLayer(Layer):
     def __init__(self, kernel_size=2):
         self.kernel_size = kernel_size
 
-     def fprop(self, inputs):
+    def fprop(self, inputs):
         output_dim_1 = int((input_dim_1-self.kernel_size)/2)+1
         output_dim_2 = int((input_dim_2-self.kernel_size)/2)+1
         outputs, self.mask = maxpool(inputs, self.kernel_size, output_dim_1, output_dim_2)
