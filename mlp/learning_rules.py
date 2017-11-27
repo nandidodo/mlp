@@ -149,7 +149,7 @@ class RMSProp(GradientDescentLearningRule):
         """
         for param, mom, grad in zip(self.params, self.moms, grads_wrt_params):
             mom *= self.mom_coeff
-            mom -= (1-self.mom_coeff) * grad **2
+            mom += (1-self.mom_coeff) * grad **2
             param -= self.learning_rate/(np.sqrt(mom+self.epsilon))*grad 
 
 
@@ -192,10 +192,6 @@ class Adam(GradientDescentLearningRule):
                 by definition zero.
         """
         super(Adam, self).__init__(learning_rate)
-        assert mom_coeff >= 0. and mom_coeff <= 1., (
-            'mom_coeff should be in the range [0, 1].'
-        )
-        self.mom_coeff = mom_coeff
         self.epsilon = 1e-8
         self.beta1 = beta1
         self.beta2 = beta2
@@ -211,15 +207,18 @@ class Adam(GradientDescentLearningRule):
         """
         super(Adam, self).initialise(params)
         self.moms = []
+        self.variances = []
         for param in self.params:
             self.moms.append(np.zeros_like(param))
+            self.variances.append(np.zeros_like(param))
 
     def reset(self):
         """Resets any additional state variables to their intial values.
         For this learning rule this corresponds to zeroing all the momenta.
         """
-        for mom in zip(self.moms):
+        for mom, v in zip(self.moms, self.variances):
             mom *= 0.
+            v *= 0.
 
     def update_params(self, grads_wrt_params):
         """Applies a single update to all parameters.
@@ -231,17 +230,16 @@ class Adam(GradientDescentLearningRule):
                 previously, with this list expected to be in the same order.
         """
         self.t += 1
-        for param, mom, grad in zip(self.params, self.moms, grads_wrt_params):
-            m, v =  0, 0
-            m *= beta1
-            m += (1-beta1)*grad
-            v *= beta2
-            v += (1-beta2)*grad**2
-            mb = m/(1-beta1)
-            vb = v/(1-beta2)
+        for param, mom, v, grad in zip(self.params, self.moms, self.variances, grads_wrt_params):
+            mom *= self.beta1
+            mom += (1 - self.beta1) * grad
+
+            v *= self.beta2
+            v += (1-self.beta2)*grad**2
+            mb = mom/(1-self.beta1)
+            vb = v/(1-self.beta2)
+
             param -= self.learning_rate*mb/(np.sqrt(vb+self.epsilon))
-
-
 
 class MomentumLearningRule(GradientDescentLearningRule):
     """Gradient descent with momentum learning rule.

@@ -15,6 +15,7 @@ respect to the layer parameters.
 import numpy as np
 import mlp.initialisers as init
 from mlp import DEFAULT_SEED
+from numba import jit
 
 class Layer(object):
     """Abstract class defining the interface for a layer."""
@@ -536,6 +537,7 @@ class ConvolutionalLayer(LayerWithParameters):
 
         self.cache = None
 
+    #@jit
     def fprop(self, inputs):
         """Forward propagates activations through the layer transformation.
         For inputs `x`, outputs `y`, kernels `K` and biases `b` the layer
@@ -559,6 +561,7 @@ class ConvolutionalLayer(LayerWithParameters):
                                     h[n,f,i,j] += self.kernels[f,c,k,l]*inputs[n,c,i+k,j+l]
         return h
 
+    #@jit
     def bprop(self, inputs, outputs, grads_wrt_outputs):
         """Back propagates gradients through a layer.
         Given gradients with respect to the outputs of the layer calculates the
@@ -590,7 +593,7 @@ class ConvolutionalLayer(LayerWithParameters):
                                     h[n,c,i,j] += kernels_rot[f,c,k,l] * grads_padded[n,f,i+k,j+l]
         return h
         
-
+    @jit
     def grads_wrt_params(self, inputs, grads_wrt_outputs):
         """Calculates gradients with respect to layer parameters.
         Args:
