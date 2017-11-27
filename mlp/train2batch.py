@@ -119,14 +119,13 @@ lrule_names = ['adam', 'rms', 'gds']
 for i in np.arange(20):
     seed += i
     for name, learning_rule in zip(lrule_names, learning_rules):
-        for dout_prob in [0.8, None]:
-            for l_rate in [0.001, 0.01, 0.1]:
-                if l_rate == 0.1 and name != 'sgd':
-                    continue
-                model = build_network(300, 4, ReluLayer(), incl_prob=dout_prob)
-                train_data.reset()
-                valid_data.reset()
-                stats = train_model_and_plot_stats(
-                    model, error, learning_rule(learning_rate=l_rate), train_data, valid_data, num_epochs, stats_interval, notebook=False)
-                path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(name) + '_' + str(dout_prob) + '_' + str(l_rate)
-                np.save(path, stats)
+        for l_rate in [0.001, 0.01, 0.1]:
+            if l_rate == 0.1 and name != 'sgd':
+                continue
+            model = build_network(300, 4, ReluLayer(), incl_prob=0.8)
+            train_data.reset()
+            valid_data.reset()
+            stats = train_model_and_plot_stats(
+                model, error, learning_rule(learning_rate=l_rate), train_data, valid_data, num_epochs, stats_interval, notebook=False)
+            path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results_batchnorm/' + str(seed) + '_' + 'run' + str(i) + '_' + str(name) + '_' + str(l_rate)
+            np.save(path, stats)
