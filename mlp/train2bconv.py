@@ -82,7 +82,7 @@ from mlp.optimisers import Optimiser
 learning_rate = 0.001
 num_epochs = 100
 stats_interval = 1
-input_dim, output_dim = 784, 47
+input_dim_1, output_dim = 784, 47
 weights_init = GlorotUniformInit(rng=rng)
 biases_init = ConstantInit(0.)
 
