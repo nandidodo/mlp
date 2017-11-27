@@ -88,8 +88,7 @@ biases_init = ConstantInit(0.)
 
 #1
 
-list_conv_models = convmodel, convmodel_twolayers, convmodel_dropout, convmodel_twolayers_dropout
-list_conv_names = ['convmodel', 'convmodel_twolayers', 'convmodel_dropout', 'convmodel_twolayers_dropout']
+
 
 convmodel = MultipleLayerModel([
     ReshapeLayer((1, 28, 28)),
@@ -150,6 +149,9 @@ convmodel_twolayers_dropout = MultipleLayerModel([
     AffineLayer(300, output_dim, weights_init, biases_init)
 ])
 
+
+list_conv_models = convmodel, convmodel_twolayers, convmodel_dropout, convmodel_twolayers_dropout
+list_conv_names = ['convmodel', 'convmodel_twolayers', 'convmodel_dropout', 'convmodel_twolayers_dropout']
 
 # ConvolutionalLayer(num_input_channels, num_output_channels,
 #                  input_dim_1, input_dim_2,
