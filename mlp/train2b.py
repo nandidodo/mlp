@@ -91,7 +91,7 @@ def build_network(hidden_dim, n_layers, activation, incl_prob=None):
     l = [AffineLayer(input_dim, hidden_dim, weights_init, biases_init), activation]
     for i in range(n_layers-1):
         if incl_prob is not None:
-            l += [DropoutLayer(rng=rng, incl_prob=incl_prob) AffineLayer(hidden_dim, hidden_dim, weights_init, biases_init), activation]
+            l += [DropoutLayer(rng=rng, incl_prob=incl_prob), AffineLayer(hidden_dim, hidden_dim, weights_init, biases_init), activation]
         else:
             l += [AffineLayer(hidden_dim, hidden_dim, weights_init, biases_init), activation]
     l += [AffineLayer(hidden_dim, output_dim, weights_init, biases_init)]
