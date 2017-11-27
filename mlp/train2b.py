@@ -71,11 +71,11 @@ valid_data = EMNISTDataProvider('valid', batch_size=batch_size, rng=rng)
 # You will probably want to add further code cells for the
 # different experiments you run.
 
-from mlp.layers import AffineLayer, SoftmaxLayer, SigmoidLayer, ReluLayer, LeakyReluLayer, ELULayer, SELULayer
+from mlp.layers import AffineLayer, SoftmaxLayer, SigmoidLayer, ReluLayer, LeakyReluLayer, ELULayer, SELULayer, DropoutLayer
 from mlp.errors import CrossEntropySoftmaxError
 from mlp.models import MultipleLayerModel
 from mlp.initialisers import ConstantInit, GlorotUniformInit
-from mlp.learning_rules import GradientDescentLearningRule
+from mlp.learning_rules import GradientDescentLearningRule, Adam, RMSProp
 from mlp.optimisers import Optimiser
 
 #setup hyperparameters
