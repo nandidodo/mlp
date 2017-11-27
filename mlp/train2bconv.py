@@ -79,10 +79,11 @@ from mlp.learning_rules import GradientDescentLearningRule, Adam, RMSProp
 from mlp.optimisers import Optimiser
 
 #setup hyperparameters
-learning_rate = 0.001
+learning_rate = 0.01
 num_epochs = 100
 stats_interval = 1
-input_dim_1, output_dim = 784, 47
+input_dim, output_dim = 784, 47
+
 weights_init = GlorotUniformInit(rng=rng)
 biases_init = ConstantInit(0.)
 
