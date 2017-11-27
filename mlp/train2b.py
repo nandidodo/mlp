@@ -80,7 +80,7 @@ from mlp.optimisers import Optimiser
 
 #setup hyperparameters
 learning_rate = 0.1
-num_epochs = 200
+num_epochs = 100
 stats_interval = 1
 input_dim, output_dim = 784, 47
 
@@ -108,8 +108,8 @@ lrule_names = ['sgd', 'adam', 'rms']
 for i in np.arange(20):
     seed += i
     for name, learning_rule in zip(lrule_names, learning_rules):
-        for dout_prob in [0.5, 0.8, None]:
-            for l_rate in [0.1, 0.01, 0.001]:
+        for dout_prob in [0.8, None]:
+            for l_rate in [0.1, 0.01]:
                 model = build_network(400, 4, ReluLayer(), incl_prob=dout_prob)
                 train_data.reset()
                 valid_data.reset()
