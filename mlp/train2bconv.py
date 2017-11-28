@@ -105,7 +105,7 @@ convmodel = MultipleLayerModel([
 
 #2
 convmodel_twolayers = MultipleLayerModel([
-    ReshapeLayer((1, 1, 28)),
+    ReshapeLayer((1, 28, 28)),
     ConvolutionalLayer(1 , 5, 28, 28, 5, 5), 
     ReluLayer(),
     MaxPoolingLayer(2),
@@ -135,7 +135,7 @@ convmodel_dropout = MultipleLayerModel([
 
 #4
 convmodel_twolayers_dropout = MultipleLayerModel([
-    ReshapeLayer((1, 1, 28)),
+    ReshapeLayer((1, 28, 28)),
     DropoutLayer(rng=rng, incl_prob=0.8),
     ConvolutionalLayer(1 , 5, 28, 28, 5, 5), 
     ReluLayer(),
@@ -165,7 +165,7 @@ error = CrossEntropySoftmaxError()
 #Remember to use notebook=False when you write a script to be run in a terminal
 for i in np.arange(20):
     seed += i
-    for name, model in zip(list_conv_names[:2], list_conv_models[:2]):
+    for name, model in zip(list_conv_names[1:], list_conv_models[1:]):
         # model = build_network(300, 4, ReluLayer(), incl_prob=dout_prob)
         train_data.reset()
         valid_data.reset()
