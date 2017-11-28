@@ -123,6 +123,7 @@ for i in np.arange(20):
             if l_rate == 0.1 and name != 'sgd':
                 continue
             model = build_network(300, 4, ReluLayer(), incl_prob=0.8)
+            print(model)
             train_data.reset()
             valid_data.reset()
             stats = train_model_and_plot_stats(
