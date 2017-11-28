@@ -171,5 +171,5 @@ for i in np.arange(20):
         valid_data.reset()
         stats = train_model_and_plot_stats(
             model, error, GradientDescentLearningRule(learning_rate=learning_rate), train_data, valid_data, num_epochs, stats_interval, notebook=False)
-        path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results/' + str(seed) + '_' + 'run' + str(i) + '_' + str(name)
+        path = '/afs/inf.ed.ac.uk/user/s17/s1786262/mlpractical/results_convnets/' + str(seed) + '_' + 'run' + str(i) + '_' + str(name)
         np.save(path, stats)
