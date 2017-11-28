@@ -383,9 +383,9 @@ class BatchNormalizationLayer(StochasticLayerWithParameters):
 
         dX_norm = grads_wrt_outputs * self.gamma
         self.dvar = np.sum(dX_norm * self.X_mu, axis=0) * -.5 * self.std_inv**3
-        self.dmu = np.sum(dX_norm * -self.std_inv, axis=0) + self.dvar * np.mean(-2. * self.X_mu, axis=0)
+        self.dmu = np.sum(dX_norm, axis=0) * -self.std_inv - 2. * self.dvar * np.mean(self.X_mu, axis=0)
 
-        dX = (dX_norm * self.std_inv) + (self.dvar * 2 * self.X_mu / N) + (self.dmu / N)
+        dX = (dX_norm * self.std_inv) + (self.dvar * 2) * (self.X_mu / N) + (self.dmu / N)
 
         return dX
 
